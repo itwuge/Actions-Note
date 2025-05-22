@@ -29,12 +29,9 @@ jobs:
           sudo -E ls -la
           sudo -E pwd
       - name: 上传到下载项
-        run: |
-          sudo -E ls -la
-          sudo -E pwd
-      - uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v4.6.2
         with:
-          name: wuge
+          name: wuge.tar.gz
           path: ./wuge.tar.gz
       - name: 创建发布
         id: create_release
@@ -54,6 +51,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: ./wuge.tar.gz
-          asset_name: wuge
-          asset_content_type: application/gz
+          asset_name: wuge.tar.gz
+          asset_content_type: application/tar.gz
     
