@@ -1,0 +1,59 @@
+# 自动化的名称
+name: test-actions
+# on字段指定触发 workflow 的条件，通常是某些事件。
+on:
+  # 可以在发生 push 事件时运行工作流。
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+env:
+  GN_TOKEN: ${{ secrets.ACTION_TOKEN }}
+jobs:
+  my_Action1:
+    runs-on: ubuntu-latest
+    # 判断是仓库持有者
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+      - name: 拉取分支
+        # 拉取分支
+        uses: actions/checkout@v4.2.2
+        with:
+          sparse-checkout: .
+      - name: 运行一些命令
+        id: name
+        run: |
+          sudo -E touch {1..20}.txt
+          sudo -E tar -zcvf wuge.tar.gz *.txt
+          sudo -E ls -la
+          sudo -E pwd
+      - name: 上传到下载项
+        run: |
+          sudo -E ls -la
+          sudo -E pwd
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: wuge
+          path: ./wuge.tar.gz
+      - name: 创建发布
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: 上传发布
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./wuge.tar.gz
+          asset_name: wuge
+          asset_content_type: application/gz
+    
