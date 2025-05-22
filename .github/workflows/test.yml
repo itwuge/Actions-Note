@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: wuge
-          path: ./wuge.tar.gz
+          path: ./
       - name: 创建发布
         id: create_release
         uses: actions/create-release@v1.1.4
@@ -51,6 +51,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: ./wuge.tar.gz
-          asset_name: wuge
+          asset_name: wuge.tar.gz
           asset_content_type: application/tar.gz
     
